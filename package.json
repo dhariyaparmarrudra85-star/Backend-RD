@@ -1,0 +1,17 @@
+{
+  "name": "node-js-1",
+  "version": "1.0.0",
+  "description": "a backend in a chai or code channel",
+  "keywords": [
+    "javascripts",
+    "bacjend",
+    "chai"
+  ],
+  "license": "ISC",
+  "author": "Rudra",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "run dev"
+  }
+}
