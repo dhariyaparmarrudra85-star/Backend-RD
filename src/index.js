@@ -6,6 +6,20 @@ configDotenv({
 })
 
 connectDB()
+.then(()=>{
+  app.on("error",(error)=>{
+      console.log("ERROR while listen app:",error);
+      
+    })
+  app.listen(process.env.PORT || 8000, ()=>{
+    console.log(` serevr is running on port : ${process.env.PORT}`);
+    
+  })
+})
+.catch((err)=>{
+   console.log("DB connection failed :",err);
+   
+})
 
 
 
