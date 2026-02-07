@@ -20,13 +20,13 @@ const userSchema = new mongoose.Schema(
             trim:true,
             
         },
-        fulName:{
+        fullName:{
             type:String,
             required:true,
             trim:true,
             index:true
         },
-        avtar:{
+        avatar:{
             type:String,
             required:true
         },
@@ -52,10 +52,10 @@ const userSchema = new mongoose.Schema(
      })
 
      userSchema.pre("save", async function (next){
-        if(!this.isModified("password")) return next()
+        if(!this.isModified("password")) return next
 
-            this.password = bcrypt.hash(this.password , 10)
-            next()
+            this.password = await bcrypt.hash(this.password , 10)
+            next
 
      })
 
