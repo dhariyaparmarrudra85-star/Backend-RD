@@ -174,6 +174,8 @@ const logoutUser = asyncHandler( async(req , res)=>{
   )
 })
 
+// newAccessToken
+
 const refreshAccessToken = asyncHandler(async(req , res) =>{
  const incomingRefreshToken =  req.cookies.refreshToken || req.body.refreshToken
  
@@ -218,4 +220,6 @@ const refreshAccessToken = asyncHandler(async(req , res) =>{
   throw new apierror( 401 , error?.message || "RefreshToken Invalid")
  }
 })
+
+
 export { registerUser, loginUser , logoutUser , refreshAccessToken};
