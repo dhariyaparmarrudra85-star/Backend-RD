@@ -5,6 +5,7 @@ import { User } from "../models/user.model.js";
 import { uploadOnCloudinary } from "../utils/cloudnaray.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
+import { deleteFromCloudinary } from "../utils/cloudnaray.js";
 
 
 
@@ -290,6 +291,13 @@ const updateAvatar = asyncHandler(async(req ,res)=>{
     throw new apierror(401 , "Avatar file missing")
     
   }
+  const existingUser = await User.findById(req.user?._id)
+
+  if(existingUser?.avatar_public_id){
+    await deleteFromCloudinary(existingUser.avatar_public_id)
+  }
+
+
  
   const avatar = await uploadOnCloudinary(avatarLocalPath)
 
@@ -301,7 +309,8 @@ const updateAvatar = asyncHandler(async(req ,res)=>{
     req.user?._id,
     {
       $set:{
-        avatar : avatar.url
+        avatar : avatar.secure_url,
+        avatar_public_id : avatar.public_id
       }
     },{new : true}
   ).select("-password")
@@ -309,7 +318,7 @@ const updateAvatar = asyncHandler(async(req ,res)=>{
   return res
   .status(200)
   .json(
-    new ApiResponse(201,user,"Avatar update successfully")
+    new ApiResponse(200,user,"Avatar update successfully")
   )
 
 })
@@ -324,6 +333,12 @@ const updateCoverImage = asyncHandler(async(req ,res)=>{
     throw new apierror(401 , "Cover file missing")
     
   }
+
+  const existingUser = await User.findById(req.user?._id)
+
+  if(existingUser?.coverImage_public_id){
+    await deleteFromCloudinary(existingUser.coverImage_public_id)
+  }
  
   const coverImage = await uploadOnCloudinary(coverLocalPath)
 
@@ -335,7 +350,8 @@ const updateCoverImage = asyncHandler(async(req ,res)=>{
     req.user?._id,
     {
       $set:{
-        coverImage : coverImage.url
+        coverImage : coverImage.secure_url,
+        coverImage_public_id:coverImage.public_id
       }
     },{new : true}
   ).select("-password")
@@ -343,7 +359,7 @@ const updateCoverImage = asyncHandler(async(req ,res)=>{
   return res
   .status(200)
   .json(
-    new ApiResponse(201,user,"CoverImage updated successfully")
+    new ApiResponse(200,user,"CoverImage updated successfully")
   )
 
 })

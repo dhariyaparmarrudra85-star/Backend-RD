@@ -30,9 +30,18 @@ const userSchema = new mongoose.Schema(
             type:String,
             required:true
         },
+        avatar_public_id: {
+   type: String,
+   required: true
+},
         coverImage:{
             type:String,
         },
+coverImage_public_id: {
+   type: String
+},
+
+
         watchHistory:[
             {
             type: mongoose.Schema.Types.ObjectId,
