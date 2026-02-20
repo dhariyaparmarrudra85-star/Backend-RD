@@ -6,6 +6,7 @@ import { uploadOnCloudinary } from "../utils/cloudnaray.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken"
 import { deleteFromCloudinary } from "../utils/cloudnaray.js";
+import mongoose from "mongoose";
 
 
 
@@ -405,7 +406,7 @@ if (!username?.trim()) {
     },
     isSubscribed:{
       $cond:{
-        if:{$in:[req.user?._id , "$subscribers.subscriber"]},
+        if:{$in:[new mongoose.Types.objectId(req.user?._id) , "$subscribers.subscriber"]},
         then:true,
         else:false
       }
@@ -436,6 +437,54 @@ if (!username?.trim()) {
  )
 })
 
+// watchhistory added
+
+const getWatchHistory = asyncHandler(async(req , res)=>{
+     const user = await User.aggregate([
+      {
+        $match:{
+          _id : new mongoose.Types.objectId(req.user._id)
+        }
+      },
+      {
+        $lookup:{
+          from : "videos",
+          localField: "watchHistory",
+          foreignField: "_id",
+          as:"watchHistory",
+          pipeline:[
+          {
+            $lookup:{
+              from:"users",
+              localField:"owner",
+              foreignField:"_id",
+              as:"owner",
+              pipeline:[{
+                $project:{
+                  fullName:1,
+                  username:1,
+                  avatar:1
+
+                }
+              }]
+            }
+          },
+          {
+          $addFields:{
+            owner:{
+              $first:"$owner"
+            }
+          }
+          }
+        ]
+        }
+      }
+     ])
+
+     return res
+     .status(200)
+     .json(new ApiResponse(200,user[0].watchHistory,"watch history fetched successfully"))
+})
 
 
 
@@ -448,7 +497,8 @@ export {  registerUser,
           updateAccountDetails,
           updateAvatar,
           updateCoverImage,
-          getUserchannelprofile
+          getUserchannelprofile,
+          getWatchHistory
        
        
         };
