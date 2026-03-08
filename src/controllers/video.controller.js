@@ -4,7 +4,7 @@ import {User} from "../models/user.model.js"
 import { apierror } from "../utils/Apierror.js"
 import {ApiResponse} from "../utils/ApiResponse.js"
 import {asyncHandler} from "../utils/asyncHandler.js"
-import {uploadOnCloudinary} from "../utils/cloudinary.js"
+import {uploadOnCloudinary} from "../utils/cloudnaray.js"
 
 
 const getAllVideos = asyncHandler(async (req, res) => {
@@ -78,6 +78,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 
 const publishAVideo = asyncHandler(async (req, res) => {
     const { title, description ,duration} = req.body
+    
     // TODO: get video, upload to cloudinary, create video
     if (!title || !description || !duration) {
         throw new apierror(400 , "All fields are required  ")
@@ -171,7 +172,7 @@ const updateVideo = asyncHandler(async (req, res) => {
         video.thumbnail = thumbnailUpload.url
     }
 
-    await video.svae()
+    await video.save()
 
     return res.status(200)
     .json(
@@ -219,7 +220,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
         throw new apierror( 404 , "Video Not Found")
     }
 
-    if (video.owner.toString() !== rea.user?._id.toString()) {
+    if (video.owner.toString() !== req.user?._id.toString()) {
         throw new apierror( 401 , "unauthorized")
     }
 
@@ -231,7 +232,7 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     .json(new ApiResponse(
         200,
         video,
-        "Video Published Successfully"
+        "Video status updated"
     ))
 })
 

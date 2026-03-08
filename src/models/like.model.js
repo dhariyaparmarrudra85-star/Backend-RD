@@ -2,22 +2,24 @@ import mongoose, { Schema } from "mongoose";
 
 const likeSchema = new Schema({
   video: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Video",
   },
-  commnent:{
-    type: Schema.Types.ObjectId,
+  comment:{
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Comment",
   },
   tweet:{
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Tweet",
   },
-  likedby:{
-    type: Schema.Types.ObjectId,
+  likedBy:{
+    type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   }
 },
 {timestamps:true});
+
+likeSchema.index({ video: 1, likedBy: 1 }, { unique: true })
 
 export const Like = mongoose.model("Like", likeSchema);
